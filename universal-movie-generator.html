@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surya AI Universal Movie Generator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#f4f6ff;font-family:Arial,sans-serif;padding:18px}
+main{max-width:850px;margin:auto}
+h1{color:#9eafff;text-align:center}
+.sub{text-align:center;color:#b9c2dc}
+.panel{background:#151d33;padding:18px;border-radius:14px;margin:16px 0;border:1px solid #303c5d}
+label{display:block;margin:14px 0 7px;font-weight:bold}
+input,textarea,select{width:100%;padding:12px;border-radius:8px;border:1px solid #465477;background:#0d1427;color:white;font-size:16px}
+textarea{min-height:85px;resize:vertical}
+button{padding:12px 16px;border:0;border-radius:9px;background:#697fff;color:white;font-weight:bold;font-size:15px;cursor:pointer;margin:8px 5px 0 0}
+button.secondary{background:#303c5d}
+.buttons{display:flex;flex-wrap:wrap;gap:5px}
+#status{color:#9eafff;margin-top:12px}
+#output{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;font-size:14px}
+.scene{border-top:1px solid #35415e;padding:14px 0}
+small{color:#b9c2dc}
+</style>
+</head>
+<body>
+<main>
+<h1>🎬 Surya AI Universal Movie Generator</h1>
+<p class="sub">Create scene-by-scene prompts for different movie genres</p>
+
+<div class="panel">
+<label for="title">🎥 Movie Title</label>
+<input id="title" value="The Lost Kingdom" placeholder="Enter movie name">
+
+<label for="genre">🎭 Movie Genre</label>
+<select id="genre">
+<option value="Fantasy">Fantasy / Dragon</option>
+<option value="Action">Action</option>
+<option value="Horror">Horror</option>
+<option value="Sci-Fi">Science Fiction</option>
+<option value="Romance">Romance</option>
+<option value="Comedy">Comedy</option>
+<option value="Adventure">Adventure</option>
+<option value="Thriller">Thriller / Mystery</option>
+</select>
+
+<label for="story">📖 Story / Plot</label>
+<textarea id="story" placeholder="Describe your movie story">A brave hero discovers a hidden secret, faces dangerous enemies, and fights to protect the people he loves.</textarea>
+
+<label for="hero">🦸 Main Hero Description</label>
+<textarea id="hero" placeholder="Face, age, hair, clothes, weapons, personality">A brave young warrior, shoulder-length dark hair, a small scar above the right eyebrow, dark leather armor, a deep red cloak, and a silver sword. Keep the same face, clothing, and proportions in every scene.</textarea>
+
+<label for="villain">👿 Villain / Second Character</label>
+<textarea id="villain" placeholder="Describe villain or second character">A mysterious enemy wearing black armor, with glowing eyes and a long dark cloak. Keep the design consistent in every scene.</textarea>
+
+<label for="world">🌍 Setting / World</label>
+<input id="world" value="An ancient kingdom surrounded by misty mountains, forests, and ruined castles">
+
+<label for="style">🎨 Visual Style</label>
+<select id="style">
+<option>Cinematic photorealism</option>
+<option>Epic fantasy cinema</option>
+<option>Dark cinematic atmosphere</option>
+<option>Anime film style</option>
+<option>3D animated movie</option>
+<option>Realistic science fiction</option>
+<option>Romantic cinematic film</option>
+<option>Vintage film look</option>
+</select>
+
+<label for="count">🎞️ Number of Scenes</label>
+<select id="count">
+<option value="20">20 Scenes</option>
+<option value="30">30 Scenes</option>
+<option value="40" selected>40 Scenes</option>
+<option value="50">50 Scenes</option>
+</select>
+
+<label for="format">📐 Video Format</label>
+<select id="format">
+<option value="16:9">16:9 — YouTube / Movie</option>
+<option value="9:16">9:16 — Reels / Shorts</option>
+<option value="1:1">1:1 — Square Video</option>
+</select>
+
+<div class="buttons">
+<button id="generate">✨ Generate Movie Prompts</button>
+<button class="secondary" id="copy">📋 Copy All Prompts</button>
+<button class="secondary" id="download">⬇ Download TXT</button>
+<button class="secondary" id="reset">↺ Reset</button>
+</div>
+<p id="status" role="status">Ready to generate.</p>
+</div>
+
+<div class="panel">
+<h2>🎬 Generated Scenes</h2>
+<p><small>Each scene includes story progression, action, camera, visual continuity and a negative prompt.</small></p>
+<div id="output">Your scene prompts will appear here.</div>
+</div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const genrePlans = {
+Fantasy: [
+"Establish the magical world and its ancient legend.",
+"Introduce the hero and an unusual discovery.",
+"Reveal a mysterious power or hidden warning.",
+"Show the first danger approaching the kingdom.",
+"The hero begins a dangerous journey.",
+"Introduce an ally and a difficult challenge.",
+"Reveal the villain's growing influence.",
+"The hero discovers a secret about the past.",
+"A betrayal creates a new threat.",
+"The hero loses an important advantage.",
+"Show the emotional cost of the journey.",
+"The hero finds a new source of courage.",
+"Prepare for a confrontation with dark forces.",
+"An unexpected revelation changes the mission.",
+"The enemy launches a powerful attack.",
+"The hero must make a difficult sacrifice.",
+"Allies gather for the final struggle.",
+"The villain reveals the true plan.",
+"The hero confronts the greatest danger.",
+"End with a magical, memorable resolution."
+],
+Action: [
+"Establish a dangerous location and urgent situation.",
+"Introduce the hero during a tense moment.",
+"Reveal the mission and its stakes.",
+"An unexpected attack interrupts the plan.",
+"The hero escapes a dangerous encounter.",
+"A clue reveals the enemy's next move.",
+"The hero prepares for a risky operation.",
+"A pursuit raises the stakes.",
+"The enemy gains an advantage.",
+"The hero discovers a betrayal.",
+"A narrow escape leaves the hero isolated.",
+"The hero develops a new strategy.",
+"An ally joins the mission.",
+"The enemy threatens innocent people.",
+"The hero enters the enemy's territory.",
+"A confrontation reveals a hidden weakness.",
+"The plan goes wrong at a critical moment.",
+"The hero makes a courageous decision.",
+"The final showdown begins.",
+"End with a powerful action-movie payoff."
+],
+Horror: [
+"Establish an isolated and unsettling location.",
+"Introduce the characters and their uneasy surroundings.",
+"Reveal a strange unexplained occurrence.",
+"A disturbing clue appears.",
+"The characters investigate against their instincts.",
+"An unseen presence makes itself known.",
+"A warning is discovered too late.",
+"The environment becomes increasingly threatening.",
+"A character disappears or becomes unreachable.",
+"A frightening discovery changes everything.",
+"The characters question what is real.",
+"The threat moves closer.",
+"A hidden history explains part of the mystery.",
+"A false sense of safety is shattered.",
+"The characters become trapped.",
+"A disturbing truth is revealed.",
+"The threat reaches its most intense point.",
+"The survivors attempt a desperate escape.",
+"The climax reveals the cost of survival.",
+"End with an eerie image or unresolved mystery."
+],
+"Sci-Fi": [
+"Establish a futuristic world and its technology.",
+"Introduce the protagonist and their ordinary mission.",
+"Detect an unexplained signal or anomaly.",
+"A technological discovery changes the situation.",
+"The protagonist investigates the mystery.",
+"Reveal a new scientific possibility.",
+"A system malfunction creates danger.",
+"An unexpected message arrives.",
+"The protagonist uncovers a hidden experiment.",
+"A powerful organization intervenes.",
+"The threat spreads beyond control.",
+"The protagonist forms an unlikely alliance.",
+"A discovery challenges what the characters believe.",
+"The enemy reveals its real objective.",
+"A critical system begins to fail.",
+"The protagonist risks everything to find a solution.",
+"Humanity faces a defining choice.",
+"The final plan is put into action.",
+"The climax tests science, courage, and trust.",
+"End with a glimpse of a changed future."
+],
+Romance: [
+"Establish the setting and emotional atmosphere.",
+"Introduce the main characters separately.",
+"A chance encounter brings them together.",
+"An unexpected conversation creates curiosity.",
+"The characters discover a shared interest.",
+"A small gesture builds trust.",
+"An obstacle complicates their growing connection.",
+"A misunderstanding creates emotional distance.",
+"Both characters confront personal fears.",
+"A meaningful memory deepens their bond.",
+"An outside pressure tests the relationship.",
+"One character makes a vulnerable confession.",
+"A secret threatens their connection.",
+"The characters face a difficult choice.",
+"Distance or conflict separates them.",
+"Both reflect on what truly matters.",
+"An honest conversation begins healing.",
+"A sincere gesture offers new hope.",
+"The characters make their final choice.",
+"End with an emotionally satisfying moment."
+],
+Comedy: [
+"Establish a funny situation and its setting.",
+"Introduce the main character and their unusual goal.",
+"A small misunderstanding begins the trouble.",
+"An awkward encounter makes things worse.",
+"The character attempts an overconfident solution.",
+"An unexpected complication appears.",
+"A harmless plan spirals out of control.",
+"A friend misunderstands the situation.",
+"The characters improvise a ridiculous solution.",
+"A comic accident changes the plan.",
+"The secret becomes harder to hide.",
+"Two characters compete for the wrong reason.",
+"A surprising twist increases the chaos.",
+"The hero's clever plan backfires.",
+"Everyone arrives at the worst possible moment.",
+"A mistaken identity creates confusion.",
+"The characters try one last desperate fix.",
+"The truth comes out in a funny way.",
+"The chaos resolves through an unexpected idea.",
+"End with a memorable comedic payoff."
+],
+Adventure: [
+"Reveal a mysterious destination and its legend.",
+"Introduce the explorer and their goal.",
+"Discover a clue to a hidden location.",
+"Begin the journey into unknown territory.",
+"Cross a dangerous natural obstacle.",
+"Find an ancient landmark.",
+"Discover a useful artifact or map.",
+"A sudden hazard forces a detour.",
+"Meet a potential ally or rival.",
+"Uncover a clue about the destination.",
+"A natural disaster threatens the expedition.",
+"The group must work together.",
+"Reveal a secret passage.",
+"An unexpected betrayal changes the journey.",
+"The explorers reach the most dangerous region.",
+"A crucial resource is lost.",
+"The hero finds a creative way forward.",
+"The final obstacle stands before the goal.",
+"Discover the truth behind the legend.",
+"End with a triumphant discovery or new mystery."
+],
+Thriller: [
+"Establish a tense setting and unanswered question.",
+"Introduce the protagonist and the initial mystery.",
+"Reveal a suspicious clue.",
+"Someone provides conflicting information.",
+"The protagonist begins an investigation.",
+"A new clue contradicts the first theory.",
+"An unknown person begins watching the hero.",
+"The stakes rise through a new threat.",
+"A trusted person behaves suspiciously.",
+"The protagonist uncovers a hidden connection.",
+"A dangerous encounter changes the investigation.",
+"Evidence suggests the wrong person may be guilty.",
+"The protagonist discovers a larger conspiracy.",
+"A betrayal destroys the current plan.",
+"The hero is trapped with limited options.",
+"A key piece of evidence is revealed.",
+"The real motive begins to emerge.",
+"The protagonist risks everything to expose the truth.",
+"The final confrontation reveals the answer.",
+"End with a twist or a lingering question."
+]
+};
+
+const cameras = [
+"wide establishing shot",
+"slow cinematic push-in",
+"tracking shot following the subject",
+"low-angle dramatic shot",
+"emotional close-up",
+"smooth aerial shot",
+"over-the-shoulder shot",
+"slow pull-back shot"
+];
+
+const motions = [
+"Natural continuous movement and realistic physics.",
+"Clear character movement with stable anatomy.",
+"Smooth camera motion without sudden jumps.",
+"Believable facial expressions and body language."
+];
+
+let allPrompts = [];
+
+function makePrompt(i, total, data) {
+  const plan = genrePlans[data.genre];
+  const phase = plan[Math.floor(i * plan.length / total)];
+  const sceneAction = plan[i % plan.length];
+  const camera = cameras[i % cameras.length];
+  const motion = motions[i % motions.length];
+
+  return `MOVIE TITLE: ${data.title}
+GENRE: ${data.genre}
+SCENE: ${i + 1} OF ${total}
+STORY: ${data.story}
+WORLD / LOCATION: ${data.world}
+
+MAIN HERO — KEEP IDENTICAL:
+${data.hero}
+
+VILLAIN / SECOND CHARACTER — KEEP IDENTICAL:
+${data.villain || "No second character specified."}
+
+STORY PROGRESSION:
+${phase}
+
+SCENE ACTION:
+${sceneAction}
+
+CAMERA:
+${camera}. Professional cinematic composition and purposeful framing.
+
+VISUAL STYLE:
+${data.style}, detailed textures, expressive lighting, atmospheric depth, professional color grading.
+
+MOTION:
+${motion} Preserve realistic physics and coherent action.
+
+CHARACTER CONSISTENCY:
+Keep faces, age, hairstyle, body proportions, clothing, colors, scars, weapons and accessories identical across all scenes. Do not randomly redesign characters. Continue story events logically from the preceding scene.
+
+FORMAT:
+${data.format}, maintain the selected aspect ratio.
+
+NEGATIVE PROMPT:
+flicker, morphing, inconsistent faces, changing costumes, extra limbs, duplicated characters, distorted anatomy, jitter, blurry frames, random text, watermark, broken physics.`;
+}
+
+$("generate").addEventListener("click", () => {
+  const data = {
+    title: $("title").value.trim(),
+    genre: $("genre").value,
+    story: $("story").value.trim(),
+    hero: $("hero").value.trim(),
+    villain: $("villain").value.trim(),
+    world: $("world").value.trim(),
+    style: $("style").value,
+    format: $("format").value
+  };
+  const count = Number($("count").value);
+
+  if (!data.title || !data.story || !data.hero) {
+    $("status").textContent =
+      "Please enter the movie title, story, and main hero description.";
+    return;
+  }
+
+  allPrompts = Array.from({length: count}, (_, i) =>
+    makePrompt(i, count, data)
+  );
+
+  $("output").textContent = allPrompts.map((prompt, i) =>
+    "================ SCENE " + (i + 1) + " ================\n\n" + prompt
+  ).join("\n\n");
+
+  $("status").textContent =
+    "Success! " + count + " prompts generated for " + data.genre + ".";
+});
+
+$("copy").addEventListener("click", async () => {
+  if (!allPrompts.length) {
+    $("status").textContent = "Please generate prompts first.";
+    return;
+  }
+  const text = allPrompts.map((p, i) =>
+    "================ SCENE " + (i + 1) + " ================\n\n" + p
+  ).join("\n\n");
+
+  try {
+    await navigator.clipboard.writeText(text);
+    $("status").textContent = "All prompts copied!";
+  } catch (e) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    const ok = document.execCommand("copy");
+    area.remove();
+    $("status").textContent = ok
+      ? "All prompts copied!"
+      : "Copy failed. Please select and copy the output manually.";
+  }
+});
+
+$("download").addEventListener("click", () => {
+  if (!allPrompts.length) {
+    $("status").textContent = "Please generate prompts first.";
+    return;
+  }
+  const text = allPrompts.map((p, i) =>
+    "================ SCENE " + (i + 1) + " ================\n\n" + p
+  ).join("\n\n");
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "surya-ai-movie-prompts.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+  $("status").textContent = "Text file download started.";
+});
+
+$("reset").addEventListener("click", () => {
+  $("title").value = "";
+  $("story").value = "";
+  $("hero").value = "";
+  $("villain").value = "";
+  $("world").value = "";
+  allPrompts = [];
+  $("output").textContent = "Your scene prompts will appear here.";
+  $("status").textContent = "Form reset. Enter your new movie details.";
+});
+</script>
+</body>
+</html>
