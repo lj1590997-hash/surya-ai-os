@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surya AI Full Movie Generator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101522;color:#fff;font-family:Arial,sans-serif;padding:18px}
+main{max-width:800px;margin:auto}
+h1{color:#9baaff}
+p{line-height:1.6;color:#cbd2e2}
+label{display:block;margin-top:16px;margin-bottom:7px;font-weight:bold}
+input,textarea,select,button{width:100%;padding:13px;border-radius:9px;font-size:16px}
+input,textarea,select{background:#20283a;color:#fff;border:1px solid #46516b}
+textarea{min-height:100px}
+button{border:0;background:#788aff;color:#101522;font-weight:bold;margin-top:12px}
+#output{white-space:pre-wrap;overflow-wrap:anywhere;background:#20283a;padding:14px;border-radius:9px;margin-top:16px;line-height:1.6}
+.scene{border:1px solid #46516b;border-radius:10px;padding:12px;margin-top:12px}
+.small{font-size:13px;color:#aeb8ce}
+</style>
+</head>
+<body>
+<main>
+<h1>🎬 Surya AI Full Movie Studio</h1>
+<p>एक कहानी से 20–50 scene-by-scene cinematic prompts बनाएँ।</p>
+
+<label>Movie का नाम</label>
+<input id="title" value="The Dragon Kingdom">
+
+<label>कहानी / Story</label>
+<textarea id="story" placeholder="अपनी फिल्म की कहानी लिखें...">एक प्राचीन राज्य में नीली आँखों वाला विशाल काला ड्रैगन जागता है। एक युवा योद्धा राज्य को बचाने निकलता है। उसे विश्वासघात, जादुई शक्तियों और अंतिम युद्ध का सामना करना पड़ता है।</textarea>
+
+<label>मुख्य किरदार का स्थायी विवरण</label>
+<textarea id="character">A gigantic ancient dragon with obsidian-black scales, glowing electric-blue eyes, enormous six-meter wings, two curved horns, scar across the left cheek, smoke drifting from nostrils. Keep the exact same design in every scene.</textarea>
+
+<label>कुल Scenes</label>
+<select id="count">
+<option value="20">20 Scenes</option>
+<option value="30">30 Scenes</option>
+<option value="40">40 Scenes</option>
+<option value="50">50 Scenes</option>
+</select>
+
+<label>Video Format</label>
+<select id="format">
+<option value="16:9 landscape cinematic">16:9 — YouTube Movie</option>
+<option value="9:16 vertical cinematic">9:16 — Shorts / Reels</option>
+</select>
+
+<button id="generate">🎥 पूरी फिल्म के Scene Prompts बनाएँ</button>
+<button id="copy">📋 सभी Prompts Copy करें</button>
+<button id="download">⬇️ Prompts की TXT File बनाएँ</button>
+
+<p class="small">यह टूल prompts बनाता है, वास्तविक वीडियो नहीं। हर scene का prompt बाहरी AI video generator में इस्तेमाल करें।</p>
+<div id="output">आपके scene prompts यहाँ दिखाई देंगे।</div>
+</main>
+
+<script>
+const phases = [
+"Opening: establish the ancient world and its mystery",
+"Discovery: reveal a danger and introduce the central conflict",
+"Rising tension: the hero discovers clues and faces obstacles",
+"First confrontation: a powerful enemy interrupts the mission",
+"Emotional turning point: a secret, loss or betrayal changes everything",
+"Preparation: the hero gathers courage and prepares for the final challenge",
+"Climax: a spectacular battle decides the kingdom's fate",
+"Resolution: show the consequences and a memorable final image"
+];
+
+function makePrompt(i,total,title,story,character,format){
+  const phaseIndex = Math.min(
+    phases.length-1,
+    Math.floor(i/phases.length)
+  );
+  const shotTypes = [
+    "wide establishing shot",
+    "slow cinematic push-in",
+    "tracking shot following the subject",
+    "low-angle heroic shot",
+    "close-up showing emotion",
+    "smooth aerial camera movement",
+    "dynamic action shot",
+    "slow pull-back final shot"
+  ];
+  const action = [
+    "Introduce the setting and establish a mysterious atmosphere.",
+    "Reveal an important clue connected to the story.",
+    "The main character moves forward while danger grows.",
+    "A tense confrontation changes the direction of the story.",
+    "Show the emotional cost of the conflict through expressive movement.",
+    "The character prepares for a difficult decision.",
+    "Deliver a dramatic story payoff with clear, readable action.",
+    "End with a visually memorable image that leads into the next scene."
+  ];
+  return `MOVIE: ${title}
+SCENE: ${i+1} of ${total}
+STORY: ${story}
+STORY PHASE: ${phases[phaseIndex]}
+MAIN CHARACTER — KEEP IDENTICAL: ${character}
+SCENE ACTION: ${action[phaseIndex]}
+CAMERA: ${shotTypes[i%shotTypes.length]}
+VISUAL STYLE: Photorealistic cinematic fantasy, detailed textures, dramatic lighting, volumetric fog, realistic scale, professional film color grading.
+MOTION: Natural continuous movement, coherent anatomy, realistic physics, stable background.
+CONTINUITY: Preserve character face, scales, eyes, horns, wings, proportions, colors and scars. Maintain location, time-of-day and costume continuity when relevant.
+FORMAT: ${format}
+NEGATIVE PROMPT: flicker, morphing, inconsistent character design, extra limbs, duplicated subjects, distorted anatomy, jitter, blurry frames, random text, watermark.`;
+}
+
+let allPrompts = [];
+
+document.getElementById("generate").onclick = () => {
+  const title = document.getElementById("title").value.trim();
+  const story = document.getElementById("story").value.trim();
+  const character = document.getElementById("character").value.trim();
+  const count = Number(document.getElementById("count").value);
+  const format = document.getElementById("format").value;
+  const output = document.getElementById("output");
+
+  if (!title || !story || !character) {
+    output.textContent = "कृपया Movie का नाम, कहानी और किरदार का विवरण भरें।";
+    return;
+  }
+
+  allPrompts = [];
+  for (let i=0; i<count; i++) {
+    allPrompts.push(makePrompt(i,count,title,story,character,format));
+  }
+  output.textContent = allPrompts.join("\n\n" + "=".repeat(36) + "\n\n");
+};
+
+document.getElementById("copy").onclick = async () => {
+  if (!allPrompts.length) {
+    alert("पहले पूरी फिल्म के Scene Prompts बनाएँ।");
+    return;
+  }
+  const text = allPrompts.join("\n\n" + "=".repeat(36) + "\n\n");
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("सभी scene prompts copy हो गए!");
+  } catch(e) {
+    alert("Copy नहीं हुआ। Prompts को दबाकर रखें और Copy चुनें।");
+  }
+};
+
+document.getElementById("download").onclick = () => {
+  if (!allPrompts.length) {
+    alert("पहले पूरी फिल्म के Scene Prompts बनाएँ।");
+    return;
+  }
+  const text = allPrompts.join("\n\n" + "=".repeat(36) + "\n\n");
+  const blob = new Blob([text],{type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "surya-ai-movie-prompts.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+</script>
+</body>
+</html>
