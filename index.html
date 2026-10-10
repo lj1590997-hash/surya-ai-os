@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surya AI Studio</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #101522;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    .container { max-width: 650px; margin: auto; }
+    h1 { color: #8b9dff; }
+    p { color: #c4cad8; line-height: 1.6; }
+    label { display: block; margin: 18px 0 8px; }
+    select, textarea, button {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+    select, textarea {
+      background: #20283a;
+      color: white;
+      border: 1px solid #414b65;
+    }
+    textarea { min-height: 100px; }
+    button {
+      margin-top: 15px;
+      border: 0;
+      background: #7588ff;
+      color: white;
+      font-weight: bold;
+    }
+    #result {
+      white-space: pre-wrap;
+      background: #20283a;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>🚀 Surya AI Studio</h1>
+    <p>आपका Universal AI Assistant Platform</p>
+
+    <label for="tool">अपना YouTube Tool चुनें</label>
+    <select id="tool">
+      <option value="script">Video Script Generator</option>
+      <option value="shorts">YouTube Shorts Ideas</option>
+      <option value="music">Original Song Ideas</option>
+      <option value="movie">AI Movie Scene Planner</option>
+      <option value="seo">Title, Description और Tags</option>
+      <option value="thumbnail">Thumbnail Ideas</option>
+    </select>
+
+    <label for="topic">वीडियो का विषय लिखें</label>
+    <textarea id="topic" placeholder="उदाहरण: एक बहादुर ड्रैगन की कहानी"></textarea>
+
+    <button id="generate">Content तैयार करें</button>
+    <div id="result" aria-live="polite">आपका तैयार content यहाँ दिखाई देगा।</div>
+    <button id="copy">Content Copy करें</button>
+  </main>
+
+  <script>
+    const templates = {
+      script: t => `VIDEO SCRIPT: ${t}\n\n1. Hook: एक रोचक सवाल से शुरुआत करें।\n2. Introduction: विषय का परिचय दें।\n3. Main Story: तीन मुख्य भागों में कहानी समझाएँ।\n4. Conclusion: मुख्य बात दोहराएँ।\n5. CTA: दर्शकों से अपनी राय पूछें।\n\nनोट: तथ्य जाँचें और अपना original content बनाएँ।`,
+      shorts: t => `SHORTS IDEA: ${t}\n\n0-3 sec: ध्यान खींचने वाला Hook\n3-15 sec: मुख्य जानकारी\n15-25 sec: रोचक मोड़ या उदाहरण\n25-30 sec: निष्कर्ष और CTA`,
+      music: t => `SONG CONCEPT: ${t}\n\nMood: अपनी पसंद का mood चुनें।\nStructure: Intro, Verse, Chorus, Verse, Chorus, Outro.\nLyrics: मौलिक बोल लिखें और किसी दूसरे गीत की नकल न करें।`,
+      movie: t => `SCENE PLANNER: ${t}\n\nScene 1: स्थान और समय स्थापित करें।\nScene 2: मुख्य किरदार का परिचय।\nScene 3: संघर्ष शुरू होता है।\nScene 4: महत्वपूर्ण मोड़।\nScene 5: परिणाम और अगला सवाल।\n\nहर scene में किरदार का रूप एक जैसा रखें।`,
+      seo: t => `VIDEO TOPIC: ${t}\n\nTitle: ${t} | पूरी कहानी हिंदी में\n\nDescription:\nइस वीडियो में हम ${t} के बारे में जानेंगे।\n\nTags: ${t}, Hindi video, Hindi content\n\nUpload से पहले title और सभी दावों की जाँच करें।`,
+      thumbnail: t => `THUMBNAIL BRIEF: ${t}\n\nMain subject: विषय का स्पष्ट चित्र\nText: 3-5 बड़े, पढ़ने योग्य शब्द\nComposition: एक मुख्य subject और साफ background\nContrast: मोबाइल स्क्रीन पर स्पष्ट दिखने वाले रंग\n\nभ्रामक thumbnail का उपयोग न करें।`
+    };
+
+    document.getElementById("generate").addEventListener("click", () => {
+      const topic = document.getElementById("topic").value.trim();
+      const tool = document.getElementById("tool").value;
+      document.getElementById("result").textContent = topic
+        ? templates[tool](topic)
+        : "पहले वीडियो का विषय लिखें।";
+    });
+
+    document.getElementById("copy").addEventListener("click", async () => {
+      const text = document.getElementById("result").textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Content copy हो गया!");
+      } catch {
+        alert("Content को दबाकर रखें और Copy चुनें।");
+      }
+    });
+  </script>
+</body>
+</html>
