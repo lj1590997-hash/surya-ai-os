@@ -50,6 +50,13 @@ button{border:0;background:#788aff;color:#101522;font-weight:bold;margin-top:12p
 </select>
 
 <button id="generate">🎥 पूरी फिल्म के Scene Prompts बनाएँ</button>
+  
+<label>🎭 Hero / दूसरा किरदार (वैकल्पिक)</label>
+<textarea id="hero">A brave young warrior with shoulder-length dark hair, a small scar above the right eyebrow, dark leather armor, a deep red cloak, and a silver sword. Keep the same face, clothing, and proportions in every scene.</textarea>
+
+<label>🎨 Character Reference / Continuity Notes</label>
+<textarea id="continuity">Keep the dragon's black scales, glowing blue eyes, two curved horns, enormous wings, and scar on the left cheek identical in every scene. Keep the warrior's face, red cloak, armor, and silver sword consistent. Continue the story logically from the previous scene.</textarea>
+  
 <button id="copy">📋 सभी Prompts Copy करें</button>
 <button id="download">⬇️ Prompts की TXT File बनाएँ</button>
 
@@ -69,11 +76,13 @@ const phases = [
 "Resolution: show the consequences and a memorable final image"
 ];
 
-function makePrompt(i,total,title,story,character,format){
+
+function makePrompt(i,total,title,story,character,format,hero,continuity){
   const phaseIndex = Math.min(
     phases.length-1,
     Math.floor(i/phases.length)
   );
+
   const shotTypes = [
     "wide establishing shot",
     "slow cinematic push-in",
@@ -84,6 +93,7 @@ function makePrompt(i,total,title,story,character,format){
     "dynamic action shot",
     "slow pull-back final shot"
   ];
+
   const action = [
     "Introduce the setting and establish a mysterious atmosphere.",
     "Reveal an important clue connected to the story.",
@@ -94,41 +104,56 @@ function makePrompt(i,total,title,story,character,format){
     "Deliver a dramatic story payoff with clear, readable action.",
     "End with a visually memorable image that leads into the next scene."
   ];
+
   return `MOVIE: ${title}
 SCENE: ${i+1} of ${total}
 STORY: ${story}
 STORY PHASE: ${phases[phaseIndex]}
 MAIN CHARACTER — KEEP IDENTICAL: ${character}
+SECOND CHARACTER — KEEP IDENTICAL: ${hero || "No second character specified"}
+CONTINUITY NOTES: ${continuity || "Maintain visual and story continuity"}
 SCENE ACTION: ${action[phaseIndex]}
 CAMERA: ${shotTypes[i%shotTypes.length]}
 VISUAL STYLE: Photorealistic cinematic fantasy, detailed textures, dramatic lighting, volumetric fog, realistic scale, professional film color grading.
 MOTION: Natural continuous movement, coherent anatomy, realistic physics, stable background.
-CONTINUITY: Preserve character face, scales, eyes, horns, wings, proportions, colors and scars. Maintain location, time-of-day and costume continuity when relevant.
+CONTINUITY: Preserve all character faces, scales, eyes, horns, wings, proportions, colors, scars, costumes and props. Continue the previous scene logically.
 FORMAT: ${format}
 NEGATIVE PROMPT: flicker, morphing, inconsistent character design, extra limbs, duplicated subjects, distorted anatomy, jitter, blurry frames, random text, watermark.`;
 }
 
+
 let allPrompts = [];
+
 
 document.getElementById("generate").onclick = () => {
   const title = document.getElementById("title").value.trim();
   const story = document.getElementById("story").value.trim();
   const character = document.getElementById("character").value.trim();
+  const hero = document.getElementById("hero").value.trim();
+  const continuity = document.getElementById("continuity").value.trim();
   const count = Number(document.getElementById("count").value);
   const format = document.getElementById("format").value;
   const output = document.getElementById("output");
 
   if (!title || !story || !character) {
-    output.textContent = "कृपया Movie का नाम, कहानी और किरदार का विवरण भरें।";
+    output.textContent =
+      "कृपया Movie का नाम, कहानी और मुख्य किरदार का विवरण भरें।";
     return;
   }
 
   allPrompts = [];
-  for (let i=0; i<count; i++) {
-    allPrompts.push(makePrompt(i,count,title,story,character,format));
+
+  for (let i = 0; i < count; i++) {
+    allPrompts.push(
+      makePrompt(i, count, title, story, character, format, hero, continuity)
+    );
   }
-  output.textContent = allPrompts.join("\n\n" + "=".repeat(36) + "\n\n");
+
+  output.textContent = allPrompts.join(
+    "\n\n" + "=".repeat(36) + "\n\n"
+  );
 };
+
 
 document.getElementById("copy").onclick = async () => {
   if (!allPrompts.length) {
