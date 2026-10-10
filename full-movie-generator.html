@@ -94,17 +94,50 @@ function makePrompt(i,total,title,story,character,format,hero,continuity){
     "slow pull-back final shot"
   ];
 
-  const action = [
-    "Introduce the setting and establish a mysterious atmosphere.",
-    "Reveal an important clue connected to the story.",
-    "The main character moves forward while danger grows.",
-    "A tense confrontation changes the direction of the story.",
-    "Show the emotional cost of the conflict through expressive movement.",
-    "The character prepares for a difficult decision.",
-    "Deliver a dramatic story payoff with clear, readable action.",
-    "End with a visually memorable image that leads into the next scene."
-  ];
-
+  
+const action = [
+  "SCENE 1: Establish the ancient kingdom at dawn. Show its magnificent castles, misty mountains and peaceful people. Foreshadow a mysterious danger.",
+  "SCENE 2: Deep beneath a mountain, the ancient black dragon awakens. Its glowing blue eyes open in darkness as stones begin to shake.",
+  "SCENE 3: The dragon emerges from the mountain. Villagers see its enormous wings silhouetted against the sky and flee in panic.",
+  "SCENE 4: Introduce the young warrior. Show the warrior discovering an ancient symbol that connects the dragon to the kingdom's forgotten history.",
+  "SCENE 5: The warrior visits an abandoned temple and finds an old prophecy. A hidden enemy watches from the shadows.",
+  "SCENE 6: A trusted ally secretly betrays the warrior by revealing the kingdom's defensive plan to the enemy.",
+  "SCENE 7: The dragon attacks the outer fortress. Soldiers defend the gates while the warrior leads civilians to safety.",
+  "SCENE 8: The warrior discovers that the dragon is guarding something rather than attacking without reason. The mystery deepens.",
+  "SCENE 9: The enemy captures the royal stronghold and frames the warrior for the kingdom's destruction.",
+  "SCENE 10: Forced to escape, the warrior crosses a dangerous ravine while enemy riders pursue closely behind.",
+  "SCENE 11: In a hidden cave, the warrior finds an ancient artifact that can reveal the dragon's true purpose.",
+  "SCENE 12: The warrior uses the artifact and sees a vision of the dragon protecting the kingdom from a greater evil.",
+  "SCENE 13: The warrior returns to the ruined village and helps survivors rebuild their courage.",
+  "SCENE 14: The dragon senses the artifact and approaches the warrior. Both remain cautious during their first direct encounter.",
+  "SCENE 15: The warrior lowers the sword and offers peace. The dragon reveals a shared threat through a powerful vision.",
+  "SCENE 16: The traitor returns with enemy forces and steals the artifact, triggering a desperate chase.",
+  "SCENE 17: The warrior and dragon pursue the enemy through a storm over towering mountains.",
+  "SCENE 18: The enemy activates an ancient weapon that begins draining the kingdom's magical energy.",
+  "SCENE 19: The warrior rallies the surviving defenders while the dragon prepares to confront the weapon.",
+  "SCENE 20: The final battle begins outside the capital. The dragon clashes with enemy beasts as the warrior fights toward the control chamber.",
+  "SCENE 21: The warrior confronts the traitor and demands the truth behind the betrayal.",
+  "SCENE 22: The traitor reveals the enemy's plan but is unwilling to surrender the weapon.",
+  "SCENE 23: The warrior defeats the traitor in a dramatic duel and recovers the stolen artifact.",
+  "SCENE 24: The dragon is wounded while protecting the city. The warrior must choose between pursuing the enemy and saving the dragon.",
+  "SCENE 25: The warrior chooses to save the dragon, proving that trust matters more than revenge.",
+  "SCENE 26: Together, the warrior and dragon attack the ancient weapon from opposite sides.",
+  "SCENE 27: The enemy unleashes a final burst of dark energy, threatening to destroy the capital.",
+  "SCENE 28: The warrior uses the artifact to expose the weapon's weakness while the dragon gathers its remaining strength.",
+  "SCENE 29: The dragon releases a focused stream of blue fire into the weapon's core. The warrior completes the ritual.",
+  "SCENE 30: The ancient weapon collapses in a spectacular burst of light, ending the immediate threat.",
+  "SCENE 31: The enemy army retreats as the kingdom's defenders reclaim the capital.",
+  "SCENE 32: The warrior helps the surviving people reunite with their families amid the ruins.",
+  "SCENE 33: The dragon rests on a mountain ridge while healers and villagers watch from a respectful distance.",
+  "SCENE 34: The kingdom honors the warrior for choosing courage, compassion and loyalty over revenge.",
+  "SCENE 35: The warrior returns the artifact to the ancient temple so its power cannot be misused again.",
+  "SCENE 36: The dragon spreads its enormous wings and flies above the restored kingdom at sunset.",
+  "SCENE 37: The warrior looks toward the distant mountains, remembering the allies lost during the conflict.",
+  "SCENE 38: A former enemy offers a fragile peace, hinting that rebuilding trust will take time.",
+  "SCENE 39: The kingdom celebrates its survival as the dragon circles above the castle one final time.",
+  "SCENE 40: End on a majestic wide shot of the dragon and kingdom beneath a glowing sunset, with a subtle hint of a new mystery."
+];
+  
   return `MOVIE: ${title}
 SCENE: ${i+1} of ${total}
 STORY: ${story}
@@ -112,7 +145,9 @@ STORY PHASE: ${phases[phaseIndex]}
 MAIN CHARACTER — KEEP IDENTICAL: ${character}
 SECOND CHARACTER — KEEP IDENTICAL: ${hero || "No second character specified"}
 CONTINUITY NOTES: ${continuity || "Maintain visual and story continuity"}
-SCENE ACTION: ${action[phaseIndex]}
+
+SCENE ACTION: ${action[i % action.length]}
+
 CAMERA: ${shotTypes[i%shotTypes.length]}
 VISUAL STYLE: Photorealistic cinematic fantasy, detailed textures, dramatic lighting, volumetric fog, realistic scale, professional film color grading.
 MOTION: Natural continuous movement, coherent anatomy, realistic physics, stable background.
