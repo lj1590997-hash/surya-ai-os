@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surya AI - Movie Generator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:18px;background:#101522;color:#fff;font-family:Arial,sans-serif}
+main{max-width:700px;margin:auto}
+h1{color:#9baaff}
+p{color:#c5ccdc;line-height:1.5}
+label{display:block;margin:16px 0 7px}
+input,select,textarea,button{width:100%;padding:13px;border-radius:9px;font-size:16px}
+input,select,textarea{background:#20283a;color:white;border:1px solid #414b65}
+textarea{min-height:95px}
+button{margin-top:12px;border:0;background:#788aff;color:white;font-weight:bold}
+.secondary{background:#303b52}
+#output{white-space:pre-wrap;overflow-wrap:anywhere;background:#20283a;padding:14px;border-radius:9px;margin-top:16px;line-height:1.6}
+</style>
+</head>
+<body>
+<main>
+<h1>🐉 Surya AI Movie Studio</h1>
+<p>Dragon • Fantasy • Action — Scene Prompt Generator</p>
+
+<label for="title">Movie का नाम</label>
+<input id="title" value="The Dragon Kingdom">
+
+<label for="hero">मुख्य किरदार</label>
+<input id="hero" value="A powerful ancient dragon with black scales and glowing blue eyes">
+
+<label for="scene">Scene चुनें</label>
+<select id="scene">
+<option value="intro">Epic Opening</option>
+<option value="flight">Dragon Flight</option>
+<option value="battle">Fantasy Battle</option>
+<option value="fire">Dragon Fire Attack</option>
+<option value="ending">Epic Ending</option>
+</select>
+
+<label for="details">Scene में क्या होना चाहिए?</label>
+<textarea id="details" placeholder="उदाहरण: ड्रैगन एक जलते हुए किले के ऊपर उड़ता है"></textarea>
+
+<button id="make">Cinematic Prompt बनाएँ</button>
+<div id="output">आपका video prompt यहाँ दिखाई देगा।</div>
+<button id="copy">Prompt Copy करें</button>
+<button class="secondary" id="video">AI Video Generator खोलें</button>
+
+<p>नोट: यह tool prompts बनाता है। असली video चुनी हुई बाहरी service पर generate होगी।</p>
+</main>
+
+<script>
+const scenes = {
+intro: "A breathtaking cinematic opening, slow aerial camera movement, mysterious atmosphere",
+flight: "The dragon flies through towering mountains, dynamic tracking shot, realistic wing movement",
+battle: "An epic fantasy battle, dramatic wide shots, dust and debris, powerful action choreography",
+fire: "The dragon unleashes a burst of fire, glowing embers, dramatic lighting, cinematic slow motion",
+ending: "A majestic final shot, the dragon stands above the kingdom, epic scale, dramatic sunset"
+};
+
+let currentPrompt = "";
+
+document.getElementById("make").onclick = () => {
+  const title = document.getElementById("title").value.trim();
+  const hero = document.getElementById("hero").value.trim();
+  const scene = document.getElementById("scene").value;
+  const details = document.getElementById("details").value.trim();
+
+  if (!title || !hero) {
+    document.getElementById("output").textContent =
+      "Movie का नाम और किरदार का विवरण भरें।";
+    return;
+  }
+
+  currentPrompt =
+`MOVIE: ${title}
+CHARACTER CONSISTENCY: ${hero}
+SCENE: ${scenes[scene]}
+ACTION: ${details || "The character enters the scene and the story advances."}
+VISUAL STYLE: Photorealistic cinematic fantasy, detailed textures, dramatic lighting, atmospheric depth.
+CAMERA: Smooth controlled camera movement, clear subject framing.
+MOTION: Natural continuous movement, coherent anatomy and physics.
+CONTINUITY: Keep the same character appearance, scale, colors and design.
+FORMAT: 16:9 landscape, suitable for a cinematic YouTube video.
+AVOID: Flicker, distorted anatomy, extra limbs, inconsistent character design, text overlays.`;
+
+  document.getElementById("output").textContent = currentPrompt;
+};
+
+document.getElementById("copy").onclick = async () => {
+  if (!currentPrompt) {
+    alert("पहले Cinematic Prompt बनाएँ।");
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(currentPrompt);
+    alert("Prompt copy हो गया!");
+  } catch {
+    alert("Prompt को दबाकर रखें और Copy चुनें।");
+  }
+};
+
+document.getElementById("video").onclick = () => {
+  window.open("https://pika.art/", "_blank", "noopener");
+};
+</script>
+</body>
+</html>
